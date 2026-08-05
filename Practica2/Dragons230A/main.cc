@@ -15,7 +15,7 @@ int main(){
     cin >> Dragon[i].first >> Dragon[i].second;
   }
 
-  sort(Dragon.rbegin(), Dragon.rend());
+  sort(Dragon.begin(), Dragon.end());
   
   for(int i = 0; i < n; i++){
     if(s > Dragon[i].first) s += Dragon[i].second;

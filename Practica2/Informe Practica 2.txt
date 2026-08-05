@@ -1,0 +1,202 @@
+
+    EJERCICIO: HELPFUL MATHS
+
+a) Análisis del problema:
+Se nos da una cadena de texto que representa una suma de dígitos ('1', '2', '3')
+separados por el carácter '+'. El objetivo es reordenar los números en orden
+no decreciente manteniendo el formato de la suma original.
+
+b) Estrategia de procesamiento:
+Como los operadores '+' siempre ocupan las posiciones impares de la cadena
+y los números las posiciones pares (0, 2, 4, ...), podemos reordenar directamente
+la cadena in-place saltando de dos en dos índices sin necesidad de extraer
+los caracteres a otra estructura auxiliar.
+
+c) Ejemplo de traza manual:
+Entrada: "3+2+1+3"
+
+    Posiciones válidas para números: índices 0, 2, 4, 6.
+
+    Búsqueda de '1': Se encuentra '1' en el índice 4. Se intercambia con la posición
+    actual disponible (auxIdx = 0). Cadena -> "1+2+3+3", auxIdx pasa a 2.
+
+    Búsqueda de '2': Se encuentra '2' en el índice 2. Se intercambia con auxIdx (2).
+    Cadena -> "1+2+3+3", auxIdx pasa a 4.
+
+    Búsqueda de '3': Se procesan los restantes en su lugar.
+    Resultado: "1+2+3+3"
+
+Idea central del algoritmo:
+Aplico un algoritmo de ordenamiento por conteo/agrupamiento simplificado (Counting/Bucket Sort in-place):
+sabiendo que los únicos operandos posibles son '1', '2' y '3', realizo tres pasadas sobre las
+posiciones pares de la cadena (una por cada digito en orden). En cada pasada busco el carácter
+correspondiente ('1', luego '2', luego '3') y, cuando lo encuentro, lo muevo a la primera
+posición disponible para números mediante un intercambio (swap) de caracteres, incrementando
+el índice de colocación (auxIdx) de dos en dos.
+
+Estructura de datos usada:
+std::string: Utilizo la propia cadena de entrada para leer y modificar directamente
+los caracteres in-place mediante accesos por índice.
+char lookFor[3]: Un arreglo estático pequeño que almacena los caracteres objetivo en
+orden ascendente: {'1', '2', '3'}.
+
+Complejidad temporal:
+O(N), donde N es la longitud de la cadena sum (número de caracteres).
+
+    Aunque hay dos bucles anidados, el bucle externo corre exactamente 3 veces (constante).
+
+    El bucle interno recorre únicamente las posiciones pares de la cadena (aproximadamente N/2 elementos).
+
+    Cada carácter en una posición par se procesa un número constante de veces (máximo 3),
+    por lo que la complejidad total de tiempo es lineal O(N).
+
+Complejidad espacial:
+O(1) auxiliar (constante), ya que el ordenamiento se realiza in-place sobre la
+cadena de entrada sin reservar arreglos ni vectores dinámicos adicionales.
+
+    EJERCICIO: TWINS
+
+a) Análisis inicial:
+El problema me pide que la suma de mis monedas sea estrictamente mayor
+que la suma de las monedas que le quedan a mi hermano.
+
+b) Condición lógica:
+Uso la condición "mine > rest" porque el enunciado exige que el valor
+de mis monedas supere estrictamente al de las sobrantes.
+
+c) Ejemplo de traza manual:
+Entrada: 4 (monedas) | Valores: 1 2 2 1 | Suma total = 10
+Aplico sort descendente -> 4 2 2 1 1
+
+    Evaluación 1: mine > total - mine (4 > 10 - 4 -> 4 > 6) -> Falso.
+
+    Evaluación 2: mine > total - mine (6 > 10 - 6 -> 6 > 4) -> Verdadero.
+    Resultado: Necesito 2 monedas.
+
+Idea central del algoritmo:
+Aplico una estrategia voraz (Greedy): para minimizar la cantidad de monedas
+necesarias para superar a mi hermano, tomo en cada paso la moneda de mayor
+valor disponible. Ordeno las monedas de mayor a menor para ir acumulando
+el valor más alto posible en cada iteración hasta que mi suma personal (mine)
+sea estrictamente mayor que la suma restante (total - mine).
+
+Estructura de datos usada:
+std::vector: Uso un arreglo dinámico para almacenar la secuencia de
+valores de las n monedas y poder ordenarlo eficientemente.
+
+Complejidad temporal:
+O(n log n), donde n es la cantidad de monedas.
+
+    La lectura de datos toma O(n).
+
+    El ordenamiento (sort(a.rbegin(), a.rend())) domina el tiempo con O(n log n).
+
+    El bucle de selección Greedy realiza como máximo n iteraciones, tomando O(n).
+
+Complejidad espacial:
+O(n) para almacenar los elementos en el vector.
+
+Caso de prueba relevante:
+Cuando todas las monedas tienen el mismo valor.
+Entrada:
+3
+2 2 2
+
+Observación de mi código:
+La condición if(mine > total - mine) break; al inicio del bucle evalúa el
+estado anterior a tomar la moneda actual a[i]. Aunque me funciona correctamente
+porque nunca se entra al bucle si ya se superó la mitad, estructuralmente es
+equivalente a evaluar la condición justo después de sumar la moneda e
+incrementar el contador.
+
+    EJERCICIO: DRAGONS
+
+a) Representación:
+vector<pair<int,int>> Dragon(n);
+
+b) Justificación Greedy:
+Lógicamente busco derrotar primero al dragón más débil para aumentar mi
+fuerza y subir de nivel antes de enfrentar a los más fuertes.
+
+c) Caso límite:
+Si s == fuerza_del_dragón, pierdo el combate (necesito s > fuerza strictly).
+
+Idea central del algoritmo:
+Aplico una estrategia voraz (Greedy): para maximizar mis probabilidades de
+derrotar a todos los dragones, la mejor decisión en todo momento es enfrentar
+primero a los dragones con la menor fuerza requerida. Al ordenar los dragones
+de menor a mayor fuerza (Dragon[i].first), voy absorbiendo la bonificación de
+fuerza (Dragon[i].second) de los más débiles para que mi fuerza total (s)
+aumente lo más rápido posible antes de combatir a los más fuertes.
+
+Estructura de datos usada:
+vector<pair<int, int>>: Un vector de pares donde cada par almacena
+(fuerza_del_dragón, bonificación_de_fuerza). Me permite agrupar los datos
+de cada dragón y aprovechar que std::sort ordena automáticamente los pares
+priorizando el primer elemento (first).
+
+Complejidad temporal:
+O(n log n), donde n es la cantidad de dragones.
+
+    La lectura de la entrada toma O(n).
+
+    El ordenamiento sort(Dragon.begin(), Dragon.end()) toma O(n log n).
+
+    El bucle que simula los combates realiza como máximo n iteraciones, tomando O(n).
+
+Complejidad espacial:
+O(n) para almacenar los n pares en el vector.
+
+Caso de prueba relevante:
+Un caso crítico ocurre cuando varios dragones tienen la misma fuerza pero
+distintas bonificaciones. Como std::sort en C++ desempata ordenando por el
+segundo elemento (second) de menor a mayor, mi código enfrenta primero al que
+da menos bonificación, garantizando una acumulación progresiva y segura de fuerza.
+
+    EJERCICIO: LAPTOPS
+
+a) Criterio de ordenamiento:
+sort(Laptop.begin(), Laptop.end()) para ordenar las laptops desde el menor
+costo al mayor.
+
+b) Regla de Dima:
+Plantea que las laptops más costosas siempre deben ser de mayor calidad.
+
+c) Caso donde Alex tiene razón (Happy Alex):
+1 2 <= Laptop 1 (Precio: 1, Calidad: 2)
+2 1 <= Laptop 2 (Precio: 2, Calidad: 1)
+Aquí la laptop 2 es más cara pero de menor calidad que la laptop 1.
+
+Idea central del algoritmo:
+Aplico un enfoque Greedy basado en ordenamiento: mi objetivo es verificar si
+existe al menos un par de laptops donde una sea estrictamente más barata pero
+de mayor calidad que otra. Al ordenar las laptops de menor a mayor precio
+(Laptop[i].first), garantizo que para cualquier índice i, Laptop[i].first < Laptop[i+1].first.
+Por propiedad transitiva, me basta con revisar si en algún par contiguo de la
+lista ordenada se incumple la regla (es decir, si Laptop[i+1].second < Laptop[i].second).
+Si detecto una sola anomalía, la hipótesis de Alex se confirma de inmediato.
+
+Estructura de datos usada:
+vector<pair<int, int>>: Un vector dinámico de pares donde cada par representa
+(precio, calidad). Lo utilizo para agrupar ambos atributos por laptop y permitir
+que std::sort los ordene automáticamente tomando el precio (first) como
+criterio principal.
+
+Complejidad temporal:
+O(n log n), donde n es el número de laptops (t en mi código).
+
+    La lectura de datos requiere O(n).
+
+    El ordenamiento sort(Laptop.begin(), Laptop.end()) domina el tiempo con O(n log n).
+
+    La verificación lineal en el bucle realiza como máximo n - 1 comparaciones, tomando O(n).
+
+Complejidad espacial:
+O(n) para almacenar los pares en el vector.
+
+Un error cometido o caso de prueba relevante:
+Error conceptual inicial (retorno prematuro): En mi primer intento intentaba
+comprobar la condición normal de Dima (Laptop[i].second < Laptop[i+1].second)
+e imprimía "Poor Alex" en la primera iteración que la cumplía. Esto me provocaba
+un fallo (Falso Negativo) en entradas donde el primer par cumplía la regla de
+Dima, pero existía otro par más adelante en el vector que le daba la razón a Alex.

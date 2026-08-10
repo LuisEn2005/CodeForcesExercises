@@ -5,7 +5,7 @@ int main(){
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 
-  int t, n, elem, maxSum = 0, maxElem, maxCountVec = 0, repMax = 0;
+  int t, n, elem, maxSum = 0, maxElem = 0, maxCountVec = 0, repMax = 0;
   cin >> t;
 
   while(t--){
@@ -14,12 +14,10 @@ int main(){
     for(int i = 0; i < n; i++){
       cin >> elem;
       a[i] = elem;
+      maxSum += elem;
+      if(maxElem < elem) maxElem = elem;
     }
-
-    maxSum = accumulate(a.begin(), a.end(), 0);
-
-    maxElem = *max_element(a.begin(), a.end());
-    
+ 
     vector<int> countVec(maxElem, 0);
 
     for(int i = 0; i < n; i++) countVec[a[i]-1]++;
@@ -27,11 +25,11 @@ int main(){
     for(int i = 0; i < maxElem; i++){
       if(countVec[i] > maxCountVec){
         maxCountVec = countVec[i];
-        repMax = countVec[i];
+        repMax = i + 1;
       }
     }
 
-    for(int i = 0; countVec[i] != 0 && i < maxElem;i++){
+    for(int i = 0; i < maxElem && countVec[i] != 0;i++){
       if(repMax - 1 != i  && countVec[i] != maxCountVec) maxCountVec -= countVec[i];
     }
     
